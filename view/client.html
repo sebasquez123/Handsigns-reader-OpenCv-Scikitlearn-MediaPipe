@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Stream Client</title>
+</head>
+
+<body>
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 10;">
+        <img src="./assets/mecatronica.png" alt="Icon 1" style="width: 130px; height: 100px;">
+    </div>
+    <div style="position: absolute; top: 20px; left: 20px; z-index: 10;">
+        <img src="./assets/utp.png" alt="Icon 2" style="width: 170px; height: 120px;">
+    </div>
+    <div style="position: relative; display: inline-block;" class="video-container">
+        <video id="video" autoplay controls playsinline width="640" height="480" style="background: #222"></video>
+        <!-- <img src="./assets/aeronautica.jpg" id="icono-centro" class="video-icon"
+            style="position: absolute; width: 300px; height: 300px; pointer-events: none;"> -->
+    </div>
+    <p id="status"> Connecting...</p>
+    <p id="track"></p>
+    <script>
+        //const url = "http://localhost:8080/offer"; //localhost
+        //const url = "http://10.153.185.147:8080/offer"; // sebas
+        //const url = "http://10.253.20.182:8080/offer"; // utp 
+        const url = "http://localhost:8080/offer";
+        const pc = new RTCPeerConnection();
+        pc.addTransceiver('video', { direction: 'recvonly' });
+
+        pc.ontrack = (event) => {
+            console.log("Track recibido:", event);
+            document.getElementById("status").innerText = "Connected";
+            document.getElementById("track").innerText = "Track recibido: " + event.streams[0];
+            const video = document.getElementById("video");
+            video.srcObject = event.streams[0];
+        };
+
+        async function start() {
+            try {
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        sdp: pc.localDescription.sdp,
+                        type: pc.localDescription.type,
+                    }),
+                });
+
+                const answer = await response.json();
+                await pc.setRemoteDescription(answer);
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("status").innerText = "Connection failed." + error;
+            }
+        }
+
+        start();
+    </script>
+</body>
+<style>
+    body {
+        background-color: #1a1a1a;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+    }
+
+    #video {
+        border: 3px solid #4CAF50;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        margin: 20px 0;
+    }
+
+    p {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        margin: 10px 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    #status {
+        color: #4CAF50;
+    }
+
+    #track {
+        color: #2196F3;
+        font-size: 14px;
+    }
+
+    .video-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .video-icon {
+        position: absolute;
+        border-radius: 10%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 48px;
+        color: #4CAF50;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.7;
+    }
+
+    #video.playing+.video-icon {
+        display: none;
+    }
+</style>
+
+</html>
