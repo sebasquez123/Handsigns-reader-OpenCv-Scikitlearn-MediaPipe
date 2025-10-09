@@ -1,5 +1,7 @@
 # Handsigns Reader: Artificial Vision & WebRTC Project
 
+<img width="638" height="476" alt="Captura de pantalla 2025-10-09 001649" src="https://github.com/user-attachments/assets/98b72694-2406-42a2-8480-e0aeeb237941" />
+
 ## 👋 User Introduction
 
 Welcome to Handsigns Reader!
