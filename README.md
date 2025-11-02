@@ -85,6 +85,38 @@ view/
 
 ### How to Use
 
+#### ⚙️  Setup & Installation
+
+#### 1. Create a Python Virtual Environment (Recommended)
+
+On Windows (PowerShell):
+
+```powershell
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+On Linux/macOS (bash):
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+#### 2. Install Project Dependencies
+
+With your virtual environment activated, run:
+
+```bash
+pip install joblib aiohttp aiortc scikit-learn mediapipe opencv-python
+```
+
+Or, if you have a `requirements.txt` file:
+
+```bash
+pip install -r requirements.txt
+```
+
 1. **Collect gestures:**
    Run the data collection script and follow instructions to capture custom gestures.
 2. **Train the model:**

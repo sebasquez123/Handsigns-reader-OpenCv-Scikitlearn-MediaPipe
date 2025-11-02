@@ -1,0 +1,6 @@
+opencv-python
+mediapipe
+scikit-learn
+aiortc
+aiohttp
+joblib
